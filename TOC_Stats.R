@@ -1,0 +1,130 @@
+#Analyses are to test significance of treatment (control DIW vs. Moderate Mn vs. High Mn) effect on soil DOC
+#Results: no signficant Tx effect found
+
+#GLM to investigate treatment effect on soil DOC
+
+library(ggplot2)
+library(ggpubr)
+library(tidyverse)
+library(broom)
+library(AICcmodavg)
+
+tx.time.toc <- c(rep("c0",3), rep("m0",3), rep("h0",3),rep("c0.5",3), rep("m0.5",3), rep("h0.5",3),rep("c24",3), rep("m24",3), rep("h24",3),rep("c72",3), rep("m72",3), rep("h72",3),rep("c120",3), rep("m120",3), rep("h120",3))
+toc<-c(0.401161454890113,0.371350362641961,0.263971308559052,0.137707908657103,0.198704459879304,0.149183464918914,0.137354897665541,0.184056800897005,0.157178562211378,
+       0.350390459140813,0.255065204575685,0.237895079215981,0.115431891070594,0.113640106648219,0.12625724931113,0.137693936376882,0.135792936080543,0.160604275147704,
+       0.259442352040816,0.340753794008832,0.264255070557029,0.0755378428187573,0.0622871113051949,0.0960753036459402,0.0924265723153321,0.101838426484427,0.125966008105983,
+       0.253360345699144,0.15954119893089,0.355142438292858,0.0476090229326836,0.0461865575802653,0.052822566399786,0.0660581492118195,0.0614347879602006,0.0549507926284375,
+       0.0775276944691159,0.175613996178428,0.158228234442836,0.0551116451920983,0.045251955881619,0.0406844505154148,0.0459888597971589,0.0383922172537899,0.0474289672150235)
+df.toc <- data.frame(toc,tx.time.toc)
+print(df.toc)
+
+tocglm <- glm(toc ~ tx.time.toc)
+summary(tocglm)         
+
+#ANOVA
+aov.toc <- aov(toc~tx.time.toc, data=df.toc)
+summary(aov.toc)
+
+#Tukey's pot-hoc test (#Tukey's requires categories as factors)
+aov.factor.toc = aov(toc ~ factor(tx.time.toc), data = df.toc)
+tukey.toc<-TukeyHSD(aov.factor.toc)
+tukey.toc
+
+tukey.cld.toc <- multcompLetters4(aov.factor.toc, tukey.toc)
+print(tukey.cld.toc)
+
+#Time 0: C0 significantly differs
+toc.0 <- c(0.401161454890113,0.371350362641961,0.263971308559052,0.137707908657103,0.198704459879304,0.149183464918914,0.137354897665541,0.184056800897005,0.157178562211378)
+tx.time.0 <- c("c0","c0","c0","m0","m0","m0","h0","h0","h0")
+df.toc.0 <- data.frame(toc.0,tx.time.0)
+print(df.toc.0)
+c0<-c(0.401161454890113,0.371350362641961,0.263971308559052)
+m0<-c(0.137707908657103,0.198704459879304,0.149183464918914)
+h0<-c(0.137354897665541,0.184056800897005,0.157178562211378)
+shapiro.test(c0)#normal
+shapiro.test(m0)#normal
+shapiro.test(h0)#normal
+
+aov.toc.0 <- aov(toc.0~tx.time.0, data=df.toc.0)
+summary(aov.toc.0)
+
+aov.factor.0 = aov(toc.0 ~ factor(tx.time.0), data = df.toc.0)
+tukey.0<-TukeyHSD(aov.factor.0)
+tukey.0
+
+#Time 0.5: C0.5 significantly differs
+toc.0.5 <- c(0.350390459140813,0.255065204575685,0.237895079215981,0.115431891070594,0.113640106648219,0.12625724931113,0.137693936376882,0.135792936080543,0.160604275147704)
+tx.time.0.5 <- c("c0.5","c0.5","c0.5","m0.5","m0.5","m0.5","h0.5","h0.5","h0.5")
+df.toc.0.5 <- data.frame(toc.0.5,tx.time.0.5)
+print(df.toc.0.5)
+c0.5<-c(0.350390459140813,0.255065204575685,0.237895079215981)
+m0.5<-c(0.115431891070594,0.113640106648219,0.12625724931113)
+h0.5<-c(0.137693936376882,0.135792936080543,0.160604275147704)
+shapiro.test(c0.5)#normal
+shapiro.test(m0.5)#normal
+shapiro.test(h0.5)#normal
+
+aov.toc.0.5 <- aov(toc.0.5~tx.time.0.5, data=df.toc.0.5)
+summary(aov.toc.0.5)
+
+aov.factor.0.5 = aov(toc.0.5 ~ factor(tx.time.0.5), data = df.toc.0.5)
+tukey.0.5<-TukeyHSD(aov.factor.0.5)
+tukey.0.5
+
+#Time 24: C24 significantly differs
+tt.24 <- c("c24","c24","c24","m24","m24","m24","h24","h24","h24")
+toc.24 <- c(0.259442352040816,0.340753794008832,0.264255070557029,0.0755378428187573,0.0622871113051949,0.0960753036459402,0.0924265723153321,0.101838426484427,0.125966008105983)
+df.24 <- data.frame(toc.24,tt.24)
+print(df.24)
+c24<-c(0.259442352040816,0.340753794008832,0.264255070557029)
+m24<-c(0.0755378428187573,0.0622871113051949,0.0960753036459402)
+h24<-c(0.0924265723153321,0.101838426484427,0.125966008105983)
+shapiro.test(c24)#normal
+shapiro.test(m24)#normal
+shapiro.test(h24)#normal
+
+aov.24 = aov(toc.24 ~ tt.24, data=df.24)
+summary(aov.24)
+
+aov.factor.24 = aov(toc.24 ~ factor(tt.24), data = df.24)
+tukey.24<-TukeyHSD(aov.factor.24)
+tukey.24
+
+#Time 72: C72 significantly differs
+tt.72 <- c("c72","c72","c72","m72","m72","m72","h72","h72","h72")
+toc.72 <- c(0.253360345699144,0.15954119893089,0.355142438292858,0.0476090229326836,0.0461865575802653,0.052822566399786,0.0660581492118195,0.0614347879602006,0.0549507926284375)
+df.72 <- data.frame(toc.72,tt.72)
+print(df.72)
+c72<-c(0.253360345699144,0.15954119893089,0.355142438292858)
+m72<-c(0.0476090229326836,0.0461865575802653,0.052822566399786)
+h72<-c(0.0660581492118195,0.0614347879602006,0.0549507926284375)
+shapiro.test(c72)#normal
+shapiro.test(m72)#normal
+shapiro.test(h72)#normal
+
+aov.72 = aov(toc.72 ~ tt.72, data=df.72)
+summary(aov.72)
+
+aov.factor.72 = aov(toc.72 ~ factor(tt.72), data = df.72)
+tukey.72<-TukeyHSD(aov.factor.72)
+tukey.72
+
+#Time 120: C120 significantly differs
+tt.120 <- c("c120","c120","c120","m120","m120","m120","h120","h120","h120")
+toc.120 <- c(0.0775276944691159,0.175613996178428,0.158228234442836,0.0551116451920983,0.045251955881619,0.0406844505154148,0.0459888597971589,0.0383922172537899,0.0474289672150235)
+df.120 <- data.frame(toc.120,tt.120)
+print(df.120)
+c120 <- c(0.0775276944691159,0.175613996178428,0.158228234442836)
+m120<- c(0.0551116451920983,0.045251955881619,0.0406844505154148)
+h120 <- c(0.0459888597971589,0.0383922172537899,0.0474289672150235)
+shapiro.test(c120)#normal
+shapiro.test(m120)#normal
+shapiro.test(h120)#normal
+
+aov.120 = aov(toc.120 ~ tt.120, data=df.120)
+summary(aov.120)
+
+aov.factor.120 = aov(toc.120 ~ factor(tt.120), data = df.120)
+tukey.120<-TukeyHSD(aov.factor.120)
+tukey.120
+
